@@ -1,0 +1,30 @@
+name: .NET Core Web API CI/CD
+
+# 1. متى يشتغل الـ Pipeline؟ عند عمل Push على فرع main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    # 2. هنا نخبر جيت هاب أن ينفذ الأوامر داخل جهازك أنت (الذي سميناه iis-server)
+    runs-on: self-hosted
+    
+    steps:
+    # الخطوة الأولى: جلب الكود المصدري من جيت هاب إلى مجلد الـ _work في جهازك
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    # الخطوة الثانية: بناء المشروع للتأكد من خلوه من الأخطاء البرمجية
+    - name: Build Project
+      run: dotnet build --configuration Release
+
+    # الخطوة الثالثة: عمل Publish وتجميع الملفات الجاهزة للتشغيل في مجلد مؤقت
+    - name: Publish Project
+      run: dotnet publish --configuration Release --output ./publish_output
+
+    # الخطوة الرابعة والأهم: نقل الملفات الصافية إلى مجلد الـ IIS الفعلي في جهازك
+    # (ملاحظة: تأكد من مسار مجلد الـ IIS الخاص بمشروعك وتعديله إذا كان مختلفاً)
+    - name: Deploy to IIS Folder
+      run: |
+        xcopy ./publish_output "C:\inetpub\wwwroot\MyTestApi" /E /Y /I
