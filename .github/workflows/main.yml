@@ -27,4 +27,4 @@ jobs:
     # (ملاحظة: تأكد من مسار مجلد الـ IIS الخاص بمشروعك وتعديله إذا كان مختلفاً)
     - name: Deploy to IIS Folder
       run: |
-        xcopy ./publish_output "C:\inetpub\wwwroot\MyTestApi" /E /Y /I
+        xcopy "publish_output" "C:\inetpub\wwwroot\MyTestApi" /E /Y /I
