@@ -27,4 +27,10 @@ jobs:
     # (ملاحظة: تأكد من مسار مجلد الـ IIS الخاص بمشروعك وتعديله إذا كان مختلفاً)
     - name: Deploy to IIS Folder
       run: |
-        robocopy "publish_output" "C:\inetpub\wwwroot\MyTestApi" /E /IS /IT || exit 0
+        try {
+            robocopy "publish_output" "C:\inetpub\wwwroot\MyTestApi" /E /IS /IT
+        } catch {
+            # روبوكوبي قد يعطي كود خروج غير صفر ولكنه يعبر عن النجاح، لذا نتجاوز الاعتراض هنا
+            Write-Output "Robocopy execution completed."
+        }
+        exit 0
